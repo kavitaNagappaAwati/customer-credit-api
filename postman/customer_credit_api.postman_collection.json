@@ -1,0 +1,319 @@
+{
+  "info": {
+    "name": "Customer Credit Profile & Loan Offer Management API",
+    "description": "Complete Postman collection for the Softlend internship evaluation project. Covers every endpoint with success and failure scenarios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "softlend-credit-api-v1"
+  },
+  "variable": [
+    { "key": "base_url",    "value": "http://localhost:8000",  "type": "string" },
+    { "key": "customer_id", "value": "1",                      "type": "string" },
+    { "key": "gap_id",      "value": "1",                      "type": "string" },
+    { "key": "offer_id",    "value": "1",                      "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "GET / — Health check (success)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/", "host": ["{{base_url}}"], "path": [""] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "POST /customers — Create customer (success)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers", "host": ["{{base_url}}"], "path": ["customers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Arjun Sharma\",\n  \"mobile\": \"9876543210\",\n  \"pan\": \"ABCDE1234F\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /customers — Duplicate mobile (409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers", "host": ["{{base_url}}"], "path": ["customers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Another Person\",\n  \"mobile\": \"9876543210\",\n  \"pan\": \"ZYXWV9876K\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /customers — Invalid PAN (422)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers", "host": ["{{base_url}}"], "path": ["customers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bad PAN User\",\n  \"mobile\": \"9999999999\",\n  \"pan\": \"invalid-pan\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /customers — Invalid mobile (422)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers", "host": ["{{base_url}}"], "path": ["customers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Short Mobile\",\n  \"mobile\": \"98765\",\n  \"pan\": \"ABCDE1234F\"\n}"
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Credit Score",
+      "item": [
+        {
+          "name": "POST /customers/{id}/credit-score — Update score (success)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers/{{customer_id}}/credit-score", "host": ["{{base_url}}"], "path": ["customers", "{{customer_id}}", "credit-score"] },
+            "body": { "mode": "raw", "raw": "{\n  \"cibil_score\": 680\n}" }
+          }
+        },
+        {
+          "name": "POST /customers/{id}/credit-score — Customer not found (404)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers/99999/credit-score", "host": ["{{base_url}}"], "path": ["customers", "99999", "credit-score"] },
+            "body": { "mode": "raw", "raw": "{\n  \"cibil_score\": 700\n}" }
+          }
+        },
+        {
+          "name": "POST /customers/{id}/credit-score — Score out of range (422)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers/{{customer_id}}/credit-score", "host": ["{{base_url}}"], "path": ["customers", "{{customer_id}}", "credit-score"] },
+            "body": { "mode": "raw", "raw": "{\n  \"cibil_score\": 950\n}" }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Credit Gaps",
+      "item": [
+        {
+          "name": "POST /customers/{id}/credit-gaps — Create gap (success)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers/{{customer_id}}/credit-gaps", "host": ["{{base_url}}"], "path": ["customers", "{{customer_id}}", "credit-gaps"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"factor\": \"Credit Utilisation\",\n  \"current_value\": \"78%\",\n  \"ideal_value\": \"<30%\",\n  \"impact\": \"high\",\n  \"estimated_score_gain\": 45,\n  \"action_description\": \"Pay down your credit card balances to below 30% of the limit.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /customers/{id}/credit-gaps — Customer not found (404)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers/99999/credit-gaps", "host": ["{{base_url}}"], "path": ["customers", "99999", "credit-gaps"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"factor\": \"Payment History\",\n  \"current_value\": \"2 missed payments\",\n  \"ideal_value\": \"0 missed payments\",\n  \"impact\": \"high\",\n  \"estimated_score_gain\": 30,\n  \"action_description\": \"Set up auto-pay to avoid missed payments.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /credit-gaps/{id}/resolve — Resolve gap (success)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{base_url}}/credit-gaps/{{gap_id}}/resolve", "host": ["{{base_url}}"], "path": ["credit-gaps", "{{gap_id}}", "resolve"] }
+          }
+        },
+        {
+          "name": "PATCH /credit-gaps/{id}/resolve — Already resolved (422)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{base_url}}/credit-gaps/{{gap_id}}/resolve", "host": ["{{base_url}}"], "path": ["credit-gaps", "{{gap_id}}", "resolve"] }
+          }
+        },
+        {
+          "name": "PATCH /credit-gaps/{id}/resolve — Gap not found (404)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{base_url}}/credit-gaps/99999/resolve", "host": ["{{base_url}}"], "path": ["credit-gaps", "99999", "resolve"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Credit Profile",
+      "item": [
+        {
+          "name": "GET /customers/{id}/credit-profile — Full profile (success)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/customers/{{customer_id}}/credit-profile", "host": ["{{base_url}}"], "path": ["customers", "{{customer_id}}", "credit-profile"] }
+          }
+        },
+        {
+          "name": "GET /customers/{id}/credit-profile — Customer not found (404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/customers/99999/credit-profile", "host": ["{{base_url}}"], "path": ["customers", "99999", "credit-profile"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Offers",
+      "item": [
+        {
+          "name": "POST /customers/{id}/offers — Create offer (success)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers/{{customer_id}}/offers", "host": ["{{base_url}}"], "path": ["customers", "{{customer_id}}", "offers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lender\": \"HDFC Bank\",\n  \"amount\": 500000,\n  \"interest_rate\": 10.5,\n  \"tenure_months\": 36,\n  \"min_score_required\": 700\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /customers/{id}/offers — Customer not found (404)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/customers/99999/offers", "host": ["{{base_url}}"], "path": ["customers", "99999", "offers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lender\": \"ICICI Bank\",\n  \"amount\": 200000,\n  \"interest_rate\": 12.0,\n  \"tenure_months\": 24,\n  \"min_score_required\": 650\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /customers/{id}/offers — All offers",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/customers/{{customer_id}}/offers", "host": ["{{base_url}}"], "path": ["customers", "{{customer_id}}", "offers"] }
+          }
+        },
+        {
+          "name": "GET /customers/{id}/offers?locked=true — Locked offers only",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/customers/{{customer_id}}/offers?locked=true",
+              "host": ["{{base_url}}"],
+              "path": ["customers", "{{customer_id}}", "offers"],
+              "query": [{ "key": "locked", "value": "true" }]
+            }
+          }
+        },
+        {
+          "name": "GET /customers/{id}/offers?locked=false — Unlocked offers only",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/customers/{{customer_id}}/offers?locked=false",
+              "host": ["{{base_url}}"],
+              "path": ["customers", "{{customer_id}}", "offers"],
+              "query": [{ "key": "locked", "value": "false" }]
+            }
+          }
+        },
+        {
+          "name": "PATCH /offers/{id}/status — Activate offer (success, score >= min)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/offers/{{offer_id}}/status", "host": ["{{base_url}}"], "path": ["offers", "{{offer_id}}", "status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"active\"\n}" }
+          }
+        },
+        {
+          "name": "PATCH /offers/{id}/status — Offer locked (422)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/offers/{{offer_id}}/status", "host": ["{{base_url}}"], "path": ["offers", "{{offer_id}}", "status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"active\"\n}" }
+          }
+        },
+        {
+          "name": "PATCH /offers/{id}/status — Invalid transition pending→disbursed (422)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/offers/{{offer_id}}/status", "host": ["{{base_url}}"], "path": ["offers", "{{offer_id}}", "status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"disbursed\"\n}" }
+          }
+        },
+        {
+          "name": "PATCH /offers/{id}/status — Offer not found (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/offers/99999/status", "host": ["{{base_url}}"], "path": ["offers", "99999", "status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"active\"\n}" }
+          }
+        },
+        {
+          "name": "GET /offers/{id}/emi — Calculate EMI (success)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/offers/{{offer_id}}/emi", "host": ["{{base_url}}"], "path": ["offers", "{{offer_id}}", "emi"] }
+          }
+        },
+        {
+          "name": "GET /offers/{id}/emi — Offer not found (404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/offers/99999/emi", "host": ["{{base_url}}"], "path": ["offers", "99999", "emi"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Bonus",
+      "item": [
+        {
+          "name": "GET /customers/{id}/improvement-summary — Success",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/customers/{{customer_id}}/improvement-summary", "host": ["{{base_url}}"], "path": ["customers", "{{customer_id}}", "improvement-summary"] }
+          }
+        },
+        {
+          "name": "GET /customers/{id}/improvement-summary — Customer not found (404)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/customers/99999/improvement-summary", "host": ["{{base_url}}"], "path": ["customers", "99999", "improvement-summary"] }
+          }
+        }
+      ]
+    }
+
+  ]
+}
