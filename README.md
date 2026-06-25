@@ -112,7 +112,26 @@ customer-credit-api/
 ├── requirements.txt
 └── README.md
 ```
+---
 
+## 🚀 How to Run Project (Quick Start)
+
+```bash
+git clone https://github.com/your-username/customer-credit-api.git
+
+cd customer-credit-api
+
+python -m venv venv
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
+mysql -u root -p
+USE customer_credit_db;
+SHOW TABLES;
+EXIT;
+
+py -3.13 -m uvicorn app.main:app --reload
 ---
 
 ## Installation
